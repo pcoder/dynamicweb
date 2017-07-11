@@ -86,3 +86,5 @@ git+https://github.com/ungleich/python-oca.git#egg=python-oca
 djangorestframework
 flake8==3.3.0
 python-memcached==1.58
+channels==1.1.6
+asgi_rabbitmq==0.5.2
