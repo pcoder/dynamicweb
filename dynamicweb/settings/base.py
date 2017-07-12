@@ -120,7 +120,8 @@ INSTALLED_APPS = (
     'datacenterlight.templatetags',
     'alplora',
     'rest_framework',
-    'opennebula_api'
+    'opennebula_api',
+    'channels',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -520,6 +521,20 @@ GOOGLE_ANALYTICS_PROPERTY_IDS = {
     '127.0.0.1:8000': 'localhost',
     'dynamicweb-development.ungleich.ch': 'development',
     'dynamicweb-staging.ungleich.ch': 'staging'
+}
+
+rabbitmq_host = os.environ.get('RABBITMQ_HOST', 'localhost')
+rabbitmq_url = 'amqp://guest:guest@%s:5672/%%2F' % rabbitmq_host
+
+CHANNEL_LAYERS = {
+    "default": {
+        # This example app uses the Rabbitmq channel layer implementation asgi_rabbitmq
+        "BACKEND": "asgi_rabbitmq.RabbitmqChannelLayer",
+        "CONFIG": {
+            "url": rabbitmq_url,
+        },
+        "ROUTING": "dynamicweb.routing.channel_routing",
+    },
 }
 
 DEBUG = bool_env('DEBUG')
