@@ -31,7 +31,10 @@ from opennebula_api.models import OpenNebulaManager
 from opennebula_api.serializers import VirtualMachineSerializer, \
     VirtualMachineTemplateSerializer
 from django.utils.translation import ugettext_lazy as _
+from celery.result import AsyncResult
 
+from hosting.tasks import delete_vm_task
+from django.http import JsonResponse
 
 CONNECTION_ERROR = "Your VMs cannot be displayed at the moment due to a backend \
                     connection error. please try again in a few minutes."
@@ -562,7 +565,7 @@ class PaymentVMView(LoginRequiredMixin, FormView):
 
             # Create a Hosting Bill
             HostingBill.create(
-                 customer=customer, billing_address=billing_address)
+                customer=customer, billing_address=billing_address)
 
             # Create Billing Address for User if he does not have one
             if not customer.user.billing_addresses.count():
@@ -788,45 +791,10 @@ class VirtualMachineView(LoginRequiredMixin, View):
     def post(self, request, *args, **kwargs):
         owner = self.request.user
         vm = self.get_object()
-
-        opennebula_vm_id = self.kwargs.get('pk')
-
-        manager = OpenNebulaManager(
-            email=owner.email,
-            password=owner.password
-        )
-
-        terminated = manager.delete_vm(
-            vm.id
-        )
-
-        if not terminated:
-            messages.error(
-                request,
-                'Error terminating VM %s' % (opennebula_vm_id)
-            )
-            return HttpResponseRedirect(self.get_success_url())
-
-        context = {
-            'vm': vm,
-            'base_url': "{0}://{1}".format(self.request.scheme, self.request.get_host())
-        }
-        email_data = {
-            'subject': 'Virtual machine plan canceled',
-            'to': self.request.user.email,
-            'context': context,
-            'template_name': 'vm_status_changed',
-            'template_path': 'hosting/emails/'
-        }
-        email = BaseEmail(**email_data)
-        email.send()
-
-        messages.error(
-            request,
-            'VM %s terminated successfully' % (opennebula_vm_id)
-        )
-
-        return HttpResponseRedirect(self.get_success_url())
+        base_url = "{0}://{1}".format(self.request.scheme, self.request.get_host())
+        vm_terminate_result = delete_vm_task.delay(owner, vm, base_url)
+        return JsonResponse({"task_id": vm_terminate_result.id, "state": vm_terminate_result.state,
+                             "result": vm_terminate_result.result})
 
 
 class HostingBillListView(PermissionRequiredMixin, LoginRequiredMixin, ListView):
@@ -871,3 +839,13 @@ class HostingBillDetailView(PermissionRequiredMixin, LoginRequiredMixin, DetailV
             bill.total_price += vm['price']
         context['vms'] = vms
         return context
+
+
+class TaskStatusView(LoginRequiredMixin, View):
+    login_url = reverse_lazy('hosting:login')
+
+    def post(self, request):
+        task_id = request.POST.get('task_id')
+        async_result = AsyncResult(task_id)
+        return JsonResponse({"task_id": async_result.id, "state": async_result.state,
+                             "result": async_result.result})

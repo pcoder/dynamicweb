@@ -6,7 +6,7 @@ from .views import DjangoHostingView, RailsHostingView, PaymentVMView,\
     VirtualMachineView, OrdersHostingDeleteView, NotificationsView, \
     MarkAsReadNotificationView, PasswordResetView, PasswordResetConfirmView, HostingPricingView,\
     CreateVirtualMachinesView, HostingBillListView, HostingBillDetailView, \
-    SSHKeyDeleteView, SSHKeyCreateView, SSHKeyListView
+    SSHKeyDeleteView, SSHKeyCreateView, SSHKeyListView, TaskStatusView
 
 urlpatterns = [
     url(r'index/?$', IndexView.as_view(), name='index'),
@@ -41,5 +41,6 @@ urlpatterns = [
         PasswordResetConfirmView.as_view(), name='reset_password_confirm'),
     url(r'^logout/?$', 'django.contrib.auth.views.logout',
         {'next_page': '/hosting/login?logged_out=true'}, name='logout'),
-    url(r'^validate/(?P<validate_slug>.*)/$', SignupValidatedView.as_view(), name='validate')
+    url(r'^validate/(?P<validate_slug>.*)/$', SignupValidatedView.as_view(), name='validate'),
+    url(r'^task_status/(?P<task_id>.*)/$', TaskStatusView.as_view(), name='task-status')
 ]
