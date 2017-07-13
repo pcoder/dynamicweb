@@ -135,18 +135,6 @@
         <p class="copyright text-muted small">Copyright &copy; ungleich GmbH {% now "Y" %}. All Rights Reserved</p>
     </div>
 </footer>
-<script>
-    var socket = new WebSocket('ws://' + window.location.host + '/users_{{request.user.id}}/');
-
-    socket.onopen = function open() {
-        console.log('WebSockets connection created.');
-    };
-
-    if (socket.readyState == WebSocket.OPEN) {
-        socket.onopen();
-    }
-</script>
-
 {% else %}
 {% include "datacenterlight/includes/_footer.html" %}
 {% endif %}
