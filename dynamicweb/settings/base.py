@@ -523,6 +523,20 @@ GOOGLE_ANALYTICS_PROPERTY_IDS = {
     'dynamicweb-staging.ungleich.ch': 'staging'
 }
 
+# CELERY Settings
+BROKER_URL = 'amqp://guest:guest@localhost//'
+
+# We want RabbitMQ to store the task results
+# See the possible types of result backends here
+# http://docs.celeryproject.org/en/latest/getting-started/first-steps-with-celery.html#keeping-results
+CELERY_RESULT_BACKEND = 'rpc'
+
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'Europe/Zurich'
+
+# django-channels settings
 rabbitmq_host = os.environ.get('RABBITMQ_HOST', 'localhost')
 rabbitmq_url = 'amqp://guest:guest@%s:5672/%%2F' % rabbitmq_host
 

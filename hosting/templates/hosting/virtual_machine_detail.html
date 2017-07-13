@@ -139,7 +139,7 @@
 											{% csrf_token %} 
 											</form>	
 												
-												<button type="text" data-href="{% url 'hosting:virtual_machines' virtual_machine.vm_id %}" data-toggle="modal" data-target="#confirm-cancel" class="btn btn-danger">{% trans "Terminate Virtual Machine"%}</button>
+												<button id="btn-confirm-cancel" type="text" data-href="{% url 'hosting:virtual_machines' virtual_machine.vm_id %}" data-toggle="modal" data-target="#confirm-cancel" class="btn btn-danger">{% trans "Terminate Virtual Machine"%}</button>
 																						
 										</div>
     
