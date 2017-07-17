@@ -59,7 +59,7 @@ class OpenNebulaManager():
                 domain=settings.OPENNEBULA_DOMAIN,
                 port=settings.OPENNEBULA_PORT,
                 endpoint=settings.OPENNEBULA_ENDPOINT
-        ))
+            ))
 
     def _get_opennebula_client(self, username, password):
         return oca.Client("{0}:{1}".format(
@@ -71,7 +71,7 @@ class OpenNebulaManager():
                 domain=settings.OPENNEBULA_DOMAIN,
                 port=settings.OPENNEBULA_PORT,
                 endpoint=settings.OPENNEBULA_ENDPOINT
-        ))
+            ))
 
     def _get_user(self, user):
         """Get the corresponding opennebula user for a CustomUser object
@@ -306,6 +306,26 @@ class OpenNebulaManager():
 
         return vm_terminated
 
+    def get_vm_details_from_server(self, vm_id):
+        vm = None
+        try:
+            vm_str = self.client.call(
+                oca.VirtualMachine.METHODS['info'],
+                int(vm_id),
+            )
+            vm = oca.VirtualMachine(vm_str, self.client)
+        except socket.timeout as socket_err:
+            logger.info("Socket timeout error: {0}".format(socket_err))
+        except OpenNebulaException as opennebula_err:
+            logger.info(
+                "OpenNebulaException error: {0}".format(opennebula_err))
+        except OSError as os_err:
+            logger.info("OSError : {0}".format(os_err))
+        except ValueError as value_err:
+            logger.info("ValueError : {0}".format(value_err))
+
+        return vm
+
     def _get_template_pool(self):
         try:
             template_pool = oca.VmTemplatePool(self.oneadmin_client)
@@ -396,7 +416,7 @@ class OpenNebulaManager():
 
     def delete_template(self, template_id):
         self.oneadmin_client.call(oca.VmTemplate.METHODS[
-                                  'delete'], template_id, False)
+                                      'delete'], template_id, False)
 
     def change_user_password(self, new_password):
         self.oneadmin_client.call(
