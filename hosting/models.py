@@ -1,16 +1,16 @@
 import os
 import logging
 
-
 from django.db import models
 from django.utils.functional import cached_property
-
 
 from Crypto.PublicKey import RSA
 
 from membership.models import StripeCustomer, CustomUser
 from utils.models import BillingAddress
 from utils.mixins import AssignPermissionsMixin
+from enum import IntEnum
+from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -42,7 +42,6 @@ class HostingPlan(models.Model):
 
 
 class HostingOrder(AssignPermissionsMixin, models.Model):
-
     ORDER_APPROVED_STATUS = 'Approved'
     ORDER_DECLINED_STATUS = 'Declined'
 
@@ -143,3 +142,30 @@ class HostingBill(AssignPermissionsMixin, models.Model):
     def create(cls, customer=None, billing_address=None):
         instance = cls.objects.create(customer=customer, billing_address=billing_address)
         return instance
+
+
+class DynamicWebActionEnumerator(IntEnum):
+    TERMINATE_VM = 1
+
+
+class DynamicWebCeleryTaskModel(models.Model):
+    """
+    A model to store the celery tasks and their details
+    """
+
+    created = models.DateTimeField(default=timezone.now)
+
+    # Virtual Machine Id
+    vm_id = models.IntegerField(default=0)
+
+    # The unique identifier for each celery task
+    celery_task_id = models.CharField(max_length=50, unique=True)
+
+    # User Id
+    user_id = models.IntegerField(default=0)
+
+    # An integer value representing the action that the task is intended to do
+    action = models.IntegerField(default=0)
+
+    class Meta:
+        ordering = ('created',)
