@@ -5,11 +5,12 @@ from django.core.mail import EmailMultiAlternatives
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth import authenticate
 from membership.models import CustomUser
+
+
 # from utils.fields import CountryField
 
 
 class SignupFormMixin(forms.ModelForm):
-
     confirm_password = forms.CharField(widget=forms.PasswordInput())
     password = forms.CharField(widget=forms.PasswordInput())
 
@@ -40,7 +41,8 @@ class LoginFormMixin(forms.Form):
         password = self.cleaned_data.get('password')
         is_auth = authenticate(email=email, password=password)
         if not is_auth:
-            raise forms.ValidationError("Your username and/or password were incorrect.")
+            raise forms.ValidationError(
+                "Your username and/or password were incorrect.")
         return self.cleaned_data
 
     def clean_email(self):
@@ -50,8 +52,6 @@ class LoginFormMixin(forms.Form):
             return email
         except CustomUser.DoesNotExist:
             raise forms.ValidationError("User does not exist")
-        else:
-            return email
 
 
 class PasswordResetRequestForm(forms.Form):
@@ -67,8 +67,6 @@ class PasswordResetRequestForm(forms.Form):
             return email
         except CustomUser.DoesNotExist:
             raise forms.ValidationError("User does not exist")
-        else:
-            return email
 
 
 class SetPasswordForm(forms.Form):
@@ -91,7 +89,7 @@ class SetPasswordForm(forms.Form):
             if password1 != password2:
                 raise forms.ValidationError(
                     self.error_messages['password_mismatch'],
-                    code='password_mismatch',)
+                    code='password_mismatch', )
         return password2
 
 
@@ -104,8 +102,10 @@ class BillingAddressForm(forms.ModelForm):
 
     class Meta:
         model = BillingAddress
-        fields = ['street_address', 'city', 'postal_code', 'country']
+        fields = ['cardholder_name', 'street_address',
+                  'city', 'postal_code', 'country']
         labels = {
+            'cardholder_name': _('Cardholder Name'),
             'street_address': _('Street Address'),
             'city': _('City'),
             'postal_code': _('Postal Code'),
@@ -119,8 +119,10 @@ class UserBillingAddressForm(forms.ModelForm):
 
     class Meta:
         model = UserBillingAddress
-        fields = ['street_address', 'city', 'postal_code', 'country', 'user']
+        fields = ['cardholder_name', 'street_address',
+                  'city', 'postal_code', 'country', 'user']
         labels = {
+            'cardholder_name': _('Cardholder Name'),
             'street_address': _('Street Building'),
             'city': _('City'),
             'postal_code': _('Postal Code'),
@@ -148,8 +150,10 @@ class ContactUsForm(forms.ModelForm):
         }
 
     def send_email(self, email_to='info@digitalglarus.ch'):
-        text_content = render_to_string('emails/contact.txt', {'data': self.cleaned_data})
-        html_content = render_to_string('emails/contact.html', {'data': self.cleaned_data})
+        text_content = render_to_string(
+            'emails/contact.txt', {'data': self.cleaned_data})
+        html_content = render_to_string(
+            'emails/contact.html', {'data': self.cleaned_data})
         email = EmailMultiAlternatives('Subject', text_content)
         email.attach_alternative(html_content, "text/html")
         email.to = [email_to]

@@ -345,7 +345,7 @@ class OpenNebulaManager():
             public_templates = [
                 template
                 for template in self._get_template_pool()
-                if 'public-' in template.name
+                if template.name.startswith('public-')
             ]
             return public_templates
         except ConnectionRefusedError:

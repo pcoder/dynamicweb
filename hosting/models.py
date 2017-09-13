@@ -3,14 +3,10 @@ import logging
 
 from django.db import models
 from django.utils.functional import cached_property
-
 from Crypto.PublicKey import RSA
-
 from membership.models import StripeCustomer, CustomUser
 from utils.models import BillingAddress
 from utils.mixins import AssignPermissionsMixin
-from enum import IntEnum
-from django.utils import timezone
 
 logger = logging.getLogger(__name__)
 
@@ -54,6 +50,7 @@ class HostingOrder(AssignPermissionsMixin, models.Model):
     cc_brand = models.CharField(max_length=10)
     stripe_charge_id = models.CharField(max_length=100, null=True)
     price = models.FloatField()
+    subscription_id = models.CharField(max_length=100, null=True)
 
     permissions = ('view_hostingorder',)
 
@@ -70,7 +67,8 @@ class HostingOrder(AssignPermissionsMixin, models.Model):
         return self.ORDER_APPROVED_STATUS if self.approved else self.ORDER_DECLINED_STATUS
 
     @classmethod
-    def create(cls, price=None, vm_id=None, customer=None, billing_address=None):
+    def create(cls, price=None, vm_id=None, customer=None,
+               billing_address=None):
         instance = cls.objects.create(
             price=price,
             vm_id=vm_id,
@@ -90,6 +88,23 @@ class HostingOrder(AssignPermissionsMixin, models.Model):
         self.cc_brand = stripe_charge.source.brand
         self.save()
 
+    def set_subscription_id(self, subscription_object, cc_details):
+        """
+        When creating a Stripe subscription, we have subscription id.
+        We store this in the subscription_id field.
+        This method sets the subscription id from subscription_object
+        and also the last4 and credit card brands used for this order.
+
+        :param subscription_object: Stripe's subscription object
+        :param cc_details: A dict containing card details
+        {last4, brand}
+        :return:
+        """
+        self.subscription_id = subscription_object.id
+        self.last4 = cc_details.get('last4')
+        self.cc_brand = cc_details.get('brand')
+        self.save()
+
     def get_cc_data(self):
         return {
             'last4': self.last4,
@@ -100,6 +115,7 @@ class HostingOrder(AssignPermissionsMixin, models.Model):
 class UserHostingKey(models.Model):
     user = models.ForeignKey(CustomUser)
     public_key = models.TextField()
+    private_key = models.FileField(upload_to='private_keys', blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     name = models.CharField(max_length=100)
 
@@ -140,32 +156,6 @@ class HostingBill(AssignPermissionsMixin, models.Model):
 
     @classmethod
     def create(cls, customer=None, billing_address=None):
-        instance = cls.objects.create(customer=customer, billing_address=billing_address)
+        instance = cls.objects.create(customer=customer,
+                                      billing_address=billing_address)
         return instance
-
-
-class DynamicWebActionEnumerator(IntEnum):
-    TERMINATE_VM = 1
-
-
-class DynamicWebCeleryTaskModel(models.Model):
-    """
-    A model to store the celery tasks and their details
-    """
-
-    created = models.DateTimeField(default=timezone.now)
-
-    # Virtual Machine Id
-    vm_id = models.IntegerField(default=0)
-
-    # The unique identifier for each celery task
-    celery_task_id = models.CharField(max_length=50, unique=True)
-
-    # User Id
-    user_id = models.IntegerField(default=0)
-
-    # An integer value representing the action that the task is intended to do
-    action = models.IntegerField(default=0)
-
-    class Meta:
-        ordering = ('created',)
