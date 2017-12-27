@@ -50,7 +50,7 @@ django-templatetag-sugar==1.0
 django-treebeard==4.0.1
 djangocms-admin-style==1.1.1
 djangocms-apphook-setup==0.1.2
-git+https://github.com/ungleich/djangocms-blog.git@feature/handle_blog_category_not_found#egg=djangocms_blog
+git+https://github.com/ungleich/djangocms-blog.git@feature/handle_blog_category_not_found#egg=djangocms-blog
 djangocms-file==1.0
 djangocms-flash==0.3.0
 djangocms-googlemap==0.4.0
