@@ -261,6 +261,8 @@ LOCALE_PATHS = [
     os.path.join(PROJECT_DIR, 'digitalglarus/locale'),
 ]
 
+CMS_PERMISSION=True
+
 CMS_PLACEHOLDER_CONF = {
     'logo_image': {
         'name': 'Logo Image',
