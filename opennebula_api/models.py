@@ -442,11 +442,17 @@ class OpenNebulaManager():
                                       'delete'], template_id, False)
 
     def change_user_password(self, passwd_hash):
-        self.oneadmin_client.call(
-            oca.User.METHODS['passwd'],
-            self.opennebula_user.id,
-            passwd_hash
-        )
+        if hasattr(self.opennebula_user, 'id'):
+            self.oneadmin_client.call(
+                oca.User.METHODS['passwd'],
+                self.opennebula_user.id,
+                passwd_hash
+            )
+        else:
+            logger.info(
+                "opennebula_user does not have an id attr. So, not making "
+                "xml-rpc call to change user password"
+            )
 
     def add_public_key(self, user, public_key='', merge=False):
         """
