@@ -97,3 +97,5 @@ sqlparse==0.1.19
 stripe==1.33.0
 vine==1.1.4
 wheel==0.29.0
+django-multisite==1.2.5
+https://github.com/nephila/djangocms-multisite/archive/master.zip

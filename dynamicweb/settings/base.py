@@ -54,7 +54,8 @@ PROJECT_DIR = os.path.abspath(
 # load .env file
 dotenv.read_dotenv("{0}/.env".format(PROJECT_DIR))
 
-SITE_ID = 1
+from multisite import SiteID
+SITE_ID = SiteID(default=1)
 
 APP_ROOT_ENDPOINT = "/"
 APPEND_SLASH = True
@@ -130,6 +131,8 @@ INSTALLED_APPS = (
     'cmsplugin_filer_link',
     # 'cmsplugin_filer_teaser',
     'cmsplugin_filer_video',
+    'multisite',
+    'djangocms_multisite',
     #
     # blog
     # versioning
@@ -163,6 +166,8 @@ MIDDLEWARE_CLASSES = (
     'cms.middleware.page.CurrentPageMiddleware',
     'cms.middleware.toolbar.ToolbarMiddleware',
     'cms.middleware.language.LanguageCookieMiddleware',
+    'multisite.middleware.DynamicSiteMiddleware',
+    'djangocms_multisite.middleware.CMSMultiSiteMiddleware',
 )
 
 CSRF_FAILURE_VIEW = 'hosting.views.forbidden_view'
@@ -260,6 +265,8 @@ LOCALE_PATHS = [
 
     os.path.join(PROJECT_DIR, 'digitalglarus/locale'),
 ]
+
+CMS_PERMISSION = True
 
 CMS_PLACEHOLDER_CONF = {
     'logo_image': {
@@ -623,6 +630,16 @@ if ENABLE_LOGGING:
 
 TEST_MANAGE_SSH_KEY_PUBKEY = env('TEST_MANAGE_SSH_KEY_PUBKEY')
 TEST_MANAGE_SSH_KEY_HOST = env('TEST_MANAGE_SSH_KEY_HOST')
+
+MULTISITE_CMS_URLS = {
+    'local-dev.blog.ungleich.ch': 'dynamicweb.urls',
+    'local-dev.nuglarus.ch': 'dynamicweb.tenant_urls',
+}
+# MULTISITE_CMS_ALIASES = {
+#     'www.example.com': ('alias1.example.com', 'alias2.example.com',),
+#     'www.example2.com': ('alias1.example2.com', 'alias2.example2.com',),
+# }
+MULTISITE_CMS_FALLBACK = 'local-dev.blog.ungleich.ch'
 
 DEBUG = bool_env('DEBUG')
 
