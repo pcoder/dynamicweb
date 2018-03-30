@@ -151,6 +151,7 @@ INSTALLED_APPS = (
     'rest_framework',
     'opennebula_api',
     'django_celery_results',
+    'rosetta',
 )
 
 MIDDLEWARE_CLASSES = (
