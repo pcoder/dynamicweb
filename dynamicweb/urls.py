@@ -68,5 +68,11 @@ urlpatterns += [
         }),
 ]
 
+
+if 'rosetta' in settings.INSTALLED_APPS:
+    urlpatterns += [
+        url(r'^rosetta/', include('rosetta.urls'))
+    ]
+
 if settings.DEBUG:
     urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]
