@@ -422,6 +422,12 @@ class OrderConfirmationView(DetailView):
         stripe_api_cus_id = request.session.get('customer')
         vm_template_id = template.get('id', 1)
         stripe_utils = StripeUtils()
+        logger.debug(("OrderConfirmationView.post: "
+                      "    template={template}, "
+                      "    specs={specs},"
+                      "    user={user}").format(
+            template=template, specs=specs, user=user)
+        )
 
         if 'token' in request.session:
             card_details = stripe_utils.get_cards_details_from_token(
@@ -533,8 +539,14 @@ class OrderConfirmationView(DetailView):
             # due to some reason. So, we would want to dissociate this card
             # here.
             # ...
-
             msg = subscription_result.get('error')
+            logger.error(("OrderConfirmationView.post: "
+                          "    stripe_subscription_obj={ssobj}, "
+                          "    ssobj_status={ssobj_status},"
+                          "    error={err}").format(
+                ssobj=str(stripe_subscription_obj),
+                ssobj_status=stripe_subscription_obj.status, err=msg)
+            )
             messages.add_message(self.request, messages.ERROR, msg,
                                  extra_tags='failed_payment')
             response = {
