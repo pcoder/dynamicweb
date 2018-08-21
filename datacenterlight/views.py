@@ -428,13 +428,28 @@ class OrderConfirmationView(DetailView):
                       "    user={user}").format(
             template=template, specs=specs, user=user)
         )
+        logger.error(("OrderConfirmationView.post: "
+                      "    template={template}, "
+                      "    specs={specs},"
+                      "    user={user}").format(
+            template=template, specs=specs, user=user)
+        )
 
         if 'token' in request.session:
+            logger.debug("token: {token}".format(
+                token=request.session['token'])
+            )
             card_details = stripe_utils.get_cards_details_from_token(
                 request.session.get('token')
             )
             if not card_details.get('response_object'):
                 msg = card_details.get('error')
+                logger.debug("dtoken: {token}".format(
+                    token=request.session['token'])
+                )
+                logger.error("token: {token}".format(
+                    token=request.session['token'])
+                )
                 messages.add_message(self.request, messages.ERROR, msg,
                                      extra_tags='failed_payment')
                 response = {
@@ -462,6 +477,7 @@ class OrderConfirmationView(DetailView):
                     stripe_customer_obj, card_details_response
                 )
                 if not ucd:
+                    logger.debug("user card details does not exist. Creating.")
                     acc_result = stripe_utils.associate_customer_card(
                         stripe_api_cus_id, request.session['token'],
                         set_as_default=True
@@ -475,6 +491,12 @@ class OrderConfirmationView(DetailView):
                         )
                         messages.add_message(self.request, messages.ERROR, msg,
                                              extra_tags='failed_payment')
+                        logger.error(
+                            "Error associating card: stripe_customer_id {}, "
+                            "token={}".format(
+                                stripe_api_cus_id, request.session['token']
+                            )
+                        )
                         response = {
                             'status': False,
                             'redirect': "{url}#{section}".format(
@@ -490,6 +512,7 @@ class OrderConfirmationView(DetailView):
                         return JsonResponse(response)
         elif 'card_id' in request.session:
             card_id = request.session.get('card_id')
+            logger.debug("card_id supplied {}. Using it.".format(card_id))
             user_card_detail = UserCardDetail.objects.get(id=card_id)
             card_details_dict = {
                 'last4': user_card_detail.last4,
@@ -497,6 +520,10 @@ class OrderConfirmationView(DetailView):
                 'card_id': user_card_detail.card_id
             }
         else:
+            logger.error(
+                "Neither card_id or token was supplied in this session. This is"
+                "not a valid request."
+            )
             response = {
                 'status': False,
                 'redirect': "{url}#{section}".format(
