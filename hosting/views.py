@@ -973,11 +973,23 @@ class OrdersHostingDetailView(LoginRequiredMixin, DetailView):
         billing_address_data = request.session.get('billing_address_data')
         vm_template_id = template.get('id', 1)
         stripe_api_cus_id = request.user.stripecustomer.stripe_id
+        logger.debug(("OrdersHostingDetailView.post: "
+                      "    template={template}, "
+                      "    specs={specs},"
+                      "    user={user}").format(
+            template=template, specs=specs, user=self.request.user)
+        )
         if 'token' in self.request.session:
             card_details = stripe_utils.get_cards_details_from_token(
                 request.session['token']
             )
             if not card_details.get('response_object'):
+                logger.error(("OrderConfirmationView.post: "
+                              "    template={template}, "
+                              "    specs={specs},"
+                              "    user={user}").format(
+                    template=template, specs=specs, user=user)
+                )
                 return HttpResponseRedirect(reverse('hosting:payment'))
             card_details_response = card_details['response_object']
             card_details_dict = {
