@@ -121,6 +121,7 @@ class IndexView(CreateView):
                     support_email=settings.DCL_SUPPORT_FROM_ADDRESS
                 )
             )
+            logger.error("User chose {msg}".format(msg=vm_pricing_name_msg))
             messages.add_message(
                 self.request, messages.ERROR, vm_pricing_name_msg,
                 extra_tags='pricing'
@@ -136,6 +137,7 @@ class IndexView(CreateView):
             messages.add_message(
                 self.request, messages.ERROR, msg, extra_tags='cores'
             )
+            logger.error("{msg}".format(msg=msg))
             return HttpResponseRedirect(referer_url + "#order_form")
 
         try:
@@ -145,6 +147,7 @@ class IndexView(CreateView):
             messages.add_message(
                 self.request, messages.ERROR, msg, extra_tags='memory'
             )
+            logger.error("{msg}".format(msg=msg))
             return HttpResponseRedirect(referer_url + "#order_form")
 
         try:
@@ -154,6 +157,7 @@ class IndexView(CreateView):
             messages.add_message(
                 self.request, messages.ERROR, msg, extra_tags='storage'
             )
+            logger.error("{msg}".format(msg=msg))
             return HttpResponseRedirect(referer_url + "#order_form")
 
         price, vat, vat_percent, discount = get_vm_price_with_vat(
@@ -251,6 +255,9 @@ class PaymentOrderView(FormView):
     @cache_control(no_cache=True, must_revalidate=True, no_store=True)
     def get(self, request, *args, **kwargs):
         if 'specs' not in request.session:
+            logger.debug(
+                "'specs' is not in session. So redirecting user to dcl index"
+            )
             return HttpResponseRedirect(reverse('datacenterlight:index'))
         return self.render_to_response(self.get_context_data())
 
@@ -281,14 +288,25 @@ class PaymentOrderView(FormView):
                 data=request.POST,
             )
         if address_form.is_valid():
+            logger.debug("'address_form' is valid.")
             token = address_form.cleaned_data.get('token')
             if token is '':
                 card_id = address_form.cleaned_data.get('card')
+                logger.debug(
+                    "token is empty. So, user using card_id = {card_id} for "
+                    "payment".format(card_id=card_id)
+                )
                 try:
                     user_card_detail = UserCardDetail.objects.get(id=card_id)
                     if not request.user.has_perm(
                             'view_usercarddetail', user_card_detail
                     ):
+                        logger.error(
+                            "{user} does not have permission to access the "
+                            "card with UserCardDetail.id={card_id}".format(
+                                user=request.user.email, card_id=card_id
+                            )
+                        )
                         raise UserCardDetail.DoesNotExist(
                             _("{user} does not have permission to access the "
                               "card").format(user=request.user.email)
@@ -310,6 +328,8 @@ class PaymentOrderView(FormView):
                 request.session['card_id'] = user_card_detail.id
             else:
                 request.session['token'] = token
+                logger.debug("token is {}".format(token))
+
             if request.user.is_authenticated():
                 this_user = {
                     'email': request.user.email,
@@ -318,6 +338,11 @@ class PaymentOrderView(FormView):
                 customer = StripeCustomer.get_or_create(
                     email=this_user.get('email'), token=token
                 )
+                logger.debug(
+                    "User is already authenticated. this_user={user}".format(
+                        user=this_user
+                    )
+                )
             else:
                 user_email = address_form.cleaned_data.get('email')
                 user_name = address_form.cleaned_data.get('name')
@@ -325,6 +350,11 @@ class PaymentOrderView(FormView):
                     'email': user_email,
                     'name': user_name
                 }
+                logger.debug(
+                    "User is NOT authenticated. this_user={user}".format(
+                        user=this_user
+                    )
+                )
                 try:
                     custom_user = CustomUser.objects.get(email=user_email)
                     customer = StripeCustomer.objects.filter(
@@ -355,8 +385,12 @@ class PaymentOrderView(FormView):
 
             request.session['billing_address_data'] = address_form.cleaned_data
             request.session['user'] = this_user
-            # Get or create stripe customer
+
             if not customer:
+                logger.error(
+                    "customer variable is not set. So, redirecting user back "
+                    "to billing form. Probably, invalid card or billing data"
+                )
                 address_form.add_error(
                     "__all__", "Invalid credit card"
                 )
@@ -372,6 +406,7 @@ class PaymentOrderView(FormView):
             return HttpResponseRedirect(
                 reverse('datacenterlight:order_confirmation'))
         else:
+            logger.debug("'address_form' is not valid.")
             context = self.get_context_data()
             context['billing_address_form'] = address_form
             return self.render_to_response(context)
@@ -387,6 +422,9 @@ class OrderConfirmationView(DetailView):
     def get(self, request, *args, **kwargs):
         context = {}
         if 'specs' not in request.session or 'user' not in request.session:
+            logger.debug(
+                "'specs' or 'user' is not in session. Redirect to dcl index"
+            )
             return HttpResponseRedirect(reverse('datacenterlight:index'))
         if 'token' in self.request.session:
             token = self.request.session['token']
@@ -395,6 +433,12 @@ class OrderConfirmationView(DetailView):
                 token
             )
             if not card_details.get('response_object'):
+                logger.error(
+                    "Could not obtain get_cards_details_from_token for "
+                    "token = {}. Error = {}".format(
+                        token, card_details.get('error')
+                    )
+                )
                 return HttpResponseRedirect(reverse('hosting:payment'))
             card_details_response = card_details['response_object']
             context['cc_last4'] = card_details_response['last4']
@@ -413,6 +457,7 @@ class OrderConfirmationView(DetailView):
             ),
             'cms_integration': get_cms_integration('default'),
         })
+        logger.debug("Context is {}".format(str(context)))
         return render(request, self.template_name, context)
 
     def post(self, request, *args, **kwargs):
@@ -428,12 +473,6 @@ class OrderConfirmationView(DetailView):
                       "    user={user}").format(
             template=template, specs=specs, user=user)
         )
-        logger.error(("OrderConfirmationView.post: "
-                      "    template={template}, "
-                      "    specs={specs},"
-                      "    user={user}").format(
-            template=template, specs=specs, user=user)
-        )
 
         if 'token' in request.session:
             logger.debug("token: {token}".format(
@@ -444,11 +483,11 @@ class OrderConfirmationView(DetailView):
             )
             if not card_details.get('response_object'):
                 msg = card_details.get('error')
-                logger.debug("dtoken: {token}".format(
-                    token=request.session['token'])
-                )
-                logger.error("token: {token}".format(
-                    token=request.session['token'])
+                logger.error(
+                    "Could not get get_cards_details_from_token for: "
+                    "{token}. Error = {msg}".format(
+                        token=request.session['token'], msg=msg
+                    )
                 )
                 messages.add_message(self.request, messages.ERROR, msg,
                                      extra_tags='failed_payment')
@@ -471,7 +510,9 @@ class OrderConfirmationView(DetailView):
                 'brand': card_details_response['brand'],
                 'card_id': card_details_response['card_id']
             }
-            stripe_customer_obj = StripeCustomer.objects.filter(stripe_id=stripe_api_cus_id).first()
+            stripe_customer_obj = StripeCustomer.objects.filter(
+                stripe_id=stripe_api_cus_id
+            ).first()
             if stripe_customer_obj:
                 ucd = UserCardDetail.get_user_card_details(
                     stripe_customer_obj, card_details_response
@@ -493,8 +534,9 @@ class OrderConfirmationView(DetailView):
                                              extra_tags='failed_payment')
                         logger.error(
                             "Error associating card: stripe_customer_id {}, "
-                            "token={}".format(
-                                stripe_api_cus_id, request.session['token']
+                            "token={}. Error = {}".format(
+                                stripe_api_cus_id, request.session['token'],
+                                acc_result['error']
                             )
                         )
                         response = {
@@ -512,7 +554,7 @@ class OrderConfirmationView(DetailView):
                         return JsonResponse(response)
         elif 'card_id' in request.session:
             card_id = request.session.get('card_id')
-            logger.debug("card_id supplied {}. Using it.".format(card_id))
+            logger.debug("Provided card_id {}. Using it.".format(card_id))
             user_card_detail = UserCardDetail.objects.get(id=card_id)
             card_details_dict = {
                 'last4': user_card_detail.last4,
@@ -521,8 +563,8 @@ class OrderConfirmationView(DetailView):
             }
         else:
             logger.error(
-                "Neither card_id or token was supplied in this session. This is"
-                "not a valid request."
+                "Neither card_id or token was supplied in this session. This "
+                "is not a valid request."
             )
             response = {
                 'status': False,
@@ -555,8 +597,8 @@ class OrderConfirmationView(DetailView):
             stripe_plan_id=stripe_plan_id)
         subscription_result = stripe_utils.subscribe_customer_to_plan(
             stripe_api_cus_id,
-            [{"plan": stripe_plan.get(
-                'response_object').stripe_plan_id}])
+            [{"plan": stripe_plan.get('response_object').stripe_plan_id}]
+        )
         stripe_subscription_obj = subscription_result.get('response_object')
         # Check if the subscription was approved and is active
         if (stripe_subscription_obj is None
