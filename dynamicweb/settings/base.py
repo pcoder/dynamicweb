@@ -688,6 +688,7 @@ if ENABLE_LOGGING:
                     LEVEL=LOG_LEVEL.lower(),
                     PROJECT_DIR=PROJECT_DIR
                 ),
+            'formatter': 'verbose',
         }
     }
     handlers_dict.update(custom_handler_item)
