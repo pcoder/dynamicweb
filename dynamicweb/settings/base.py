@@ -688,16 +688,6 @@ if ENABLE_LOGGING:
                     LEVEL=LOG_LEVEL.lower(),
                     PROJECT_DIR=PROJECT_DIR
                 ),
-            'formatters': {
-                'simple': {
-                    'format': '[%(asctime)s] %(levelname)s %(message)s',
-                    'datefmt': '%Y-%m-%d %H:%M:%S'
-                },
-                'verbose': {
-                    'format': '[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s',
-                    'datefmt': '%Y-%m-%d %H:%M:%S'
-                },
-            },
         }
     }
     handlers_dict.update(custom_handler_item)
@@ -705,7 +695,17 @@ if ENABLE_LOGGING:
         'version': 1,
         'disable_existing_loggers': False,
         'handlers': handlers_dict,
-        'loggers': loggers_dict
+        'loggers': loggers_dict,
+        'formatters': {
+            'simple': {
+                'format': '[%(asctime)s] %(levelname)s %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+            'verbose': {
+                'format': '[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s',
+                'datefmt': '%Y-%m-%d %H:%M:%S'
+            },
+        },
     }
 
 TEST_MANAGE_SSH_KEY_PUBKEY = env('TEST_MANAGE_SSH_KEY_PUBKEY')
