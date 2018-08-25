@@ -8,15 +8,19 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2018-03-30 21:29+0000\n"
-"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
-"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"POT-Creation-Date: 2018-07-05 23:11+0000\n"
+"PO-Revision-Date: 2018-03-30 23:22+0000\n"
+"Last-Translator: b'Anonymous User <coder.purple+25@gmail.com>'\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "Language: \n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Translated-Using: django-rosetta 0.8.1\n"
+
+msgid "CMS Favicon"
+msgstr ""
 
 #, python-format
 msgid "Your New VM %(vm_name)s at Data Center Light"
@@ -96,13 +100,14 @@ msgstr "Deine E-Mail-Adresse"
 msgid "Password"
 msgstr "Passwort"
 
+#, python-format
 msgid ""
 "You can reset your password <a href=\"%(base_url)s%(reset_password_url)s\" "
 "style=\"text-decoration: none; color: #4382c8; font-weight: 400;\">here</a>."
 msgstr ""
-"Du kannst dein Passwort <a href=\"%(base_url)s%(reset_password_url)s\" "
-"style=\"text-decoration: none; color: #4382c8; font-weight: 400;\">hier</a> "
-"zurück setzen."
+"Du kannst dein Passwort <a href=\"%(base_url)s%(reset_password_url)s\" style="
+"\"text-decoration: none; color: #4382c8; font-weight: 400;\">hier</a> "
+"zurücksetzen."
 
 msgid "Your Data Center Light Team"
 msgstr "Dein Data Center Light Team"
@@ -113,7 +118,7 @@ msgid ""
 msgstr "Kopiere den folgenden Link in die Adressleiste deines Browsers."
 
 msgid "You can reset your password here"
-msgstr "Du kannst dein Passwort hier zurück setzen"
+msgstr "Du kannst dein Passwort hier zurücksetzen"
 
 msgid "Welcome to Data Center Light!"
 msgstr "Willkommen beim Data Center Light!"
@@ -138,6 +143,9 @@ msgstr "Monat"
 msgid "VAT included"
 msgstr "MwSt. inklusive"
 
+msgid "You save"
+msgstr "Du sparst"
+
 msgid "Hosted in Switzerland"
 msgstr "Standort: Schweiz"
 
@@ -159,21 +167,6 @@ msgstr "Weiter"
 msgid "Home"
 msgstr "Home"
 
-msgid "Highlights"
-msgstr ""
-
-msgid "Scale out"
-msgstr "Skalierung"
-
-msgid "Reliable and light"
-msgstr "Zuverlässig und leicht"
-
-msgid "Pricing"
-msgstr "Preise"
-
-msgid "Order VM"
-msgstr "VM bestellen"
-
 msgid "Contact"
 msgstr "Kontakt"
 
@@ -182,6 +175,9 @@ msgstr "Nutzungsbedingungen"
 
 msgid "Finally, an affordable VM hosting in Switzerland!"
 msgstr "Endlich: bezahlbares VM Hosting in der Schweiz"
+
+msgid "Highlights"
+msgstr ""
 
 msgid "I want it!"
 msgstr "Das will ich haben!"
@@ -213,6 +209,9 @@ msgstr ""
 "mit FOSS (Free Open Source Software) arbeitet und wir daher auf "
 "Lizenzgebühren verzichten können. "
 
+msgid "Scale out"
+msgstr "Skalierung"
+
 msgid ""
 "We don't use special hardware. We use commodity hardware: we buy computers "
 "that you buy. Just many more and put them in a cozy home for computers "
@@ -221,6 +220,9 @@ msgstr ""
 "Wir benutzen keine spezielle Hardware, sondern am Markt verfügbare, "
 "erschwingliche Systeme. Bei grösserer Auslastung werden mehr "
 "Standardkomponenten hinzugekauft und skalieren so das Datencenter."
+
+msgid "Reliable and light"
+msgstr "Zuverlässig und leicht"
 
 msgid ""
 "Our VMs are located in Switzerland, with reliable power supply and fast "
@@ -312,11 +314,31 @@ msgstr "Gesamt"
 msgid "including VAT"
 msgstr "inkl. Mehrwertsteuer"
 
+msgid "excluding VAT"
+msgstr "exkl. Mehrwertsteuer"
+
 msgid "Month"
 msgstr "Monat"
 
+msgid "Discount"
+msgstr "Rabatt"
+
+msgid "Will be applied at checkout"
+msgstr "wird an der Kasse angewendet"
+
 msgid "Credit Card"
 msgstr "Kreditkarte"
+
+msgid ""
+"Please select one of the cards that you used before or fill in your credit "
+"card information below. We are using <a href=\"https://stripe.com\" target="
+"\"_blank\">Stripe</a> for payment and do not store your information in our "
+"database."
+msgstr ""
+"Bitte wähle eine der zuvor genutzten Kreditkarten oder gib Deine "
+"Kreditkartendetails unten an. Die Bezahlung wird über "
+"<a href=\"https://stripe.com\" target=\"_blank\">Stripe</a> abgewickelt. "
+"Wir speichern Deine Kreditkartendetails nicht in unserer Datenbank."
 
 msgid ""
 "Please fill in your credit card information below. We are using <a href="
@@ -327,31 +349,23 @@ msgstr ""
 "\"https://stripe.com\" target=\"_blank\">Stripe</a> für die Bezahlung und "
 "speichern keine Informationen in unserer Datenbank."
 
-msgid ""
-"You are not making any payment yet. After submitting your card information, "
-"you will be taken to the Confirm Order Page."
-msgstr ""
-"Es wird noch keine Bezahlung vorgenommen. Die Bezahlung wird erst ausgelöst, "
-"nachdem Du die Bestellung auf der nächsten Seite bestätigt hast."
+msgid "Last"
+msgstr "Letzten"
 
-msgid "Card Number"
-msgstr "Kreditkartennummer"
+msgid "Type"
+msgstr "Typ"
 
-msgid "Expiry Date"
-msgstr "Ablaufdatum"
+msgid "SELECT"
+msgstr "AUSWÄHLEN"
 
-msgid "CVC"
-msgstr ""
+msgid "Add a new credit card"
+msgstr "Eine neue Kreditkarte hinzufügen"
 
-msgid "Card Type"
-msgstr "Kartentyp"
+msgid "NEW CARD"
+msgstr "NEUE KARTE"
 
-msgid ""
-"You are not making any payment yet. After placing your order, you will be "
-"taken to the Submit Payment Page."
-msgstr ""
-"Es wird noch keine Bezahlung vorgenommen. Die Bezahlung wird erst ausgelöst, "
-"nachdem Du die Bestellung auf der nächsten Seite bestätigt hast."
+msgid "New Credit Card"
+msgstr "Neue Kreditkarte"
 
 msgid "Processing"
 msgstr "Weiter"
@@ -379,15 +393,21 @@ msgid "Order summary"
 msgstr "Bestellungsübersicht"
 
 msgid "Product"
-msgstr ""
+msgstr "Produkt"
+
+msgid "Subtotal"
+msgstr "Zwischensumme"
+
+msgid "VAT"
+msgstr "Mehrwertsteuer"
 
 #, python-format
 msgid ""
 "By clicking \"Place order\" this plan will charge your credit card account "
-"with the fee of %(vm_price)sCHF/month"
+"with %(vm_total_price)s CHF/month"
 msgstr ""
-"Wenn Du \"bestellen\" auswählst, wird Deine Kreditkarte mit %(vm_price)sCHF "
-"pro Monat belastet"
+"Wenn Du \"bestellen\" auswählst, wird Deine Kreditkarte mit "
+"%(vm_total_price)s CHF pro Monat belastet"
 
 msgid "Place order"
 msgstr "Bestellen"
@@ -396,7 +416,7 @@ msgid "Processing..."
 msgstr "Abarbeitung..."
 
 msgid "Hold tight, we are processing your request"
-msgstr "Bitte warten - wir verbeiten Deine Anfrage gerade"
+msgstr "Bitte warten - wir verarbeiten Deine Anfrage gerade"
 
 msgid "OK"
 msgstr ""
@@ -495,6 +515,17 @@ msgstr "Ungültige RAM-Grösse"
 msgid "Invalid storage size"
 msgstr "Ungültige Speicher-Grösse"
 
+#, python-brace-format
+msgid "Incorrect pricing name. Please contact support{support_email}"
+msgstr ""
+
+#, python-brace-format
+msgid "{user} does not have permission to access the card"
+msgstr "{user} hat keine Erlaubnis auf diese Karte zuzugreifen"
+
+msgid "An error occurred. Details: {}"
+msgstr "Ein Fehler ist aufgetreten. Details: {}"
+
 msgid "Confirm Order"
 msgstr "Bestellung Bestätigen"
 
@@ -508,6 +539,11 @@ msgstr ""
 "Es ist ein Fehler bei der Zahlung betreten. Du wirst nach dem Schliessen vom "
 "Popup zur Bezahlseite weitergeleitet."
 
+#, python-brace-format
+msgid "An error occurred while associating the card. Details: {details}"
+msgstr "Beim Verbinden der Karte ist ein Fehler aufgetreten. Details: "
+"{details}"
+
 msgid "Thank you for the order."
 msgstr "Danke für Deine Bestellung."
 
@@ -517,6 +553,34 @@ msgid ""
 msgstr ""
 "Deine VM ist gleich bereit. Wir senden Dir eine Bestätigungsemail, sobald Du "
 "auf sie zugreifen kannst."
+
+#~ msgid ""
+#~ "You are not making any payment yet. After submitting your card "
+#~ "information, you will be taken to the Confirm Order Page."
+#~ msgstr ""
+#~ "Es wird noch keine Bezahlung vorgenommen. Die Bezahlung wird erst "
+#~ "ausgelöst, nachdem Du die Bestellung auf der nächsten Seite bestätigt "
+#~ "hast."
+
+#~ msgid "Card Number"
+#~ msgstr "Kreditkartennummer"
+
+#~ msgid "Expiry Date"
+#~ msgstr "Ablaufdatum"
+
+#~ msgid ""
+#~ "You are not making any payment yet. After placing your order, you will be "
+#~ "taken to the Submit Payment Page."
+#~ msgstr ""
+#~ "Es wird noch keine Bezahlung vorgenommen. Die Bezahlung wird erst "
+#~ "ausgelöst, nachdem Du die Bestellung auf der nächsten Seite bestätigt "
+#~ "hast."
+
+#~ msgid "Pricing"
+#~ msgstr "Preise"
+
+#~ msgid "Order VM"
+#~ msgstr "VM bestellen"
 
 #~ msgid "Enter name"
 #~ msgstr "Name"
