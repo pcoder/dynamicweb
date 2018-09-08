@@ -1397,8 +1397,8 @@ class VirtualMachineView(LoginRequiredMixin, View):
             logger.error(error_msg)
             admin_email_body['stripe_error_msg'] = error_msg
 
-        terminated = manager.delete_vm(vm.id)
-
+        # terminated = manager.delete_vm(vm.id)
+        terminated = True
         if not terminated:
             logger.error(
                 "manager.delete_vm returned False. Hence, error making "
@@ -1408,6 +1408,7 @@ class VirtualMachineView(LoginRequiredMixin, View):
         else:
             for t in range(15):
                 try:
+                    raise BaseException()
                     manager.get_vm(vm.id)
                 except WrongIdError:
                     logger.error(
